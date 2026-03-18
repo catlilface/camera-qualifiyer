@@ -1,17 +1,23 @@
 services:
-  frontend:
-    build: ./frontend
-    ports:
-      - "${FRONTEND_EXTERNAL_PORT}:3000"
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "${FRONTEND_EXTERNAL_PORT}:3000"
 
-  backend:
-    build: ./backend
-    ports:
-      - "${BACKEND_EXTERNAL_PORT}:8080"
+  # backend:
+  #   build: ./backend
+  #   ports:
+  #     - "${BACKEND_EXTERNAL_PORT}:8080"
+  #   depends_on:
+  #     rabbitmq:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_healthy
+
+  evaluator:
+    build: ./evaluator
     depends_on:
       rabbitmq:
-        condition: service_healthy
-      postgres:
         condition: service_healthy
 
   rabbitmq:
