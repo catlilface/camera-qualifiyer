@@ -1,75 +1,123 @@
-# React + TypeScript + Vite
+## 🚀 Стек технологий
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+| Категория | Технология | Версия |
+|-----------|------------|--------|
+| **Фреймворк** | React | 19.x |
+| **Язык** | TypeScript | 5.9.x |
+| **Сборщик** | Vite | 8.x |
+| **Стилизация** | Tailwind CSS | 3.4.x |
+| **UI-библиотека** | shadcn/ui (Radix UI) | latest |
+| **Менеджер состояния** | Zustand | 5.x |
+| **Линтинг** | ESLint + Prettier | 9.x / 3.x |
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 📁 Структура проекта
 
-## React Compiler
-
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+frontend/
+├── public/                 # Статические файлы (favicon, robots.txt)
+├── src/
+│   ├── components/
+│   │   └── ui/            # Компоненты shadcn/ui (button, input, card...)
+│   ├── store/
+│   │   └── useStore.ts    # Zustand стор (глобальное состояние)
+│   ├── lib/
+│   │   └── utils.ts       # Утилиты (cn, clsx)
+│   ├── App.tsx            # Главный компонент приложения
+│   ├── main.tsx           # Точка входа (ReactDOM)
+│   └── index.css          # Глобальные стили + директивы Tailwind
+├── index.html             # HTML-шаблон (корень проекта)
+├── package.json           # Зависимости и скрипты
+├── vite.config.ts         # Конфигурация Vite (алиасы, плагины)
+├── tailwind.config.js     # Конфигурация Tailwind CSS
+├── tsconfig.json          # Конфигурация TypeScript
+├── eslint.config.js       # Конфигурация ESLint (Flat Config)
+├── .prettierrc            # Настройки форматирования Prettier
+├── .gitignore             # Игнорируемые файлы для Git
+└── README.md              # Документация проекта
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ⚙️ Переменные окружения
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+На данный момент проект **не требует** настройки переменных окружения для запуска.
+
+При необходимости добавления API-ключей или настроек, создайте файл `.env` в корне проекта:
+
+---
+
+## 🛠️ Установка и запуск
+
+### Требования
+
+- **Node.js** версии 18.x или выше
+- **npm** версии 9.x или выше
+
+Проверить версии:
+```bash
+node -v
+npm -v
 ```
+
+### 1. Клонирование репозитория
+
+```bash
+git clone https://github.com/catlilface/camera-evaluator.git
+cd camera-evaluator/frontend
+```
+
+### 2. Установка зависимостей
+
+```bash
+npm install
+```
+
+### 3. Запуск в режиме разработки
+
+```bash
+npm run dev
+```
+
+После запуска откройте в браузере: **http://localhost:5173**
+
+
+### 4. Сборка для продакшена
+
+```bash
+npm run build
+```
+
+Собранные файлы появятся в папке `dist/`.
+
+
+---
+
+## 📜 Доступные скрипты
+
+| Команда | Описание |
+|---------|----------|
+| `npm run dev` | Запуск сервера разработки (Vite) |
+| `npm run build` | Сборка проекта для продакшена |
+| `npm run preview` | Просмотр собранной версии локально |
+| `npm run lint` | Проверка кода через ESLint |
+| `npm run lint:fix` | Автоматическое исправление ошибок ESLint |
+| `npm run format` | Форматирование кода через Prettier |
+| `npm run format:check` | Проверка форматирования без изменений |
+
+---
+
+### Автоматическое форматирование при сохранении
+
+Добавьте в `.vscode/settings.json`:
+
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "css.lint.unknownAtRules": "ignore"
+}
