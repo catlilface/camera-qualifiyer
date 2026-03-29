@@ -1,4 +1,4 @@
-FROM golang:1.24 AS builder
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /go/src/app
 
@@ -20,8 +20,6 @@ WORKDIR /app
 COPY --from=builder /go/src/app/app .
 COPY --from=builder /go/src/app/configs ./configs
 
-# Переменная окружения для пути к конфигу
 ENV CONFIG_PATH=./configs/docker.yaml
 
-# Используем shell form для подстановки переменной
 CMD ./app --config-file "$CONFIG_PATH"

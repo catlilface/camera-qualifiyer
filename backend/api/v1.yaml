@@ -9,80 +9,11 @@ servers:
     description: Local server
 
 paths:
-  /photos/upload:
+  /health:
     post:
-      summary: Загрузка фотографии
-      description: |
-        Загружает фотографию и отправляет её в RabbitMQ для дальнейшей обработки.
-        Поддерживаются форматы: JPEG, PNG, GIF, WebP.
-        Максимальный размер: 10 MB.
-      operationId: uploadPhoto
-      tags:
-        - photos
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              required:
-                - photo
-              properties:
-                photo:
-                  type: string
-                  format: binary
-                  description: Файл фотографии
+      summary: Проверка работоспособности
+      description: Проверка работоспособности
+      operationId: Health
       responses:
-        '202':
-          description: Фотография принята в обработку
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UploadResponse'
-        '400':
-          description: Некорректный запрос
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '413':
-          description: Файл слишком большой
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '415':
-          description: Неподдерживаемый формат
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Внутренняя ошибка сервера
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-components:
-  schemas:
-    UploadResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Уникальный идентификатор фотографии
-      required:
-        - id
-
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-      required:
-        - code
-        - message
+        '200':
+          description: Ok

@@ -19,15 +19,12 @@ const (
 )
 
 type Server struct {
-	mainRouter   *gin.Engine
-	debugRouter  *gin.Engine
-	mainHTTPSrv  *http.Server
-	debugHTTPSrv *http.Server
-	mainPort     string
-	debugPort    string
+	mainRouter  *gin.Engine
+	mainHTTPSrv *http.Server
+	mainPort    string
 }
 
-func New(mainPort, debugPort string) *Server {
+func New(mainPort string) *Server {
 	gin.SetMode(gin.DebugMode)
 
 	mainRouter := gin.New()
@@ -36,15 +33,10 @@ func New(mainPort, debugPort string) *Server {
 		c.Status(http.StatusOK)
 	})
 
-	debugRouter := gin.New()
-
 	return &Server{
-		mainRouter:   mainRouter,
-		mainHTTPSrv:  newHTTPServer(buildLocalAddr(mainPort), mainRouter),
-		mainPort:     mainPort,
-		debugRouter:  debugRouter,
-		debugHTTPSrv: newHTTPServer(buildLocalAddr(debugPort), debugRouter),
-		debugPort:    debugPort,
+		mainRouter:  mainRouter,
+		mainHTTPSrv: newHTTPServer(buildLocalAddr(mainPort), mainRouter),
+		mainPort:    mainPort,
 	}
 }
 
@@ -59,17 +51,7 @@ func newHTTPServer(addr string, router *gin.Engine) *http.Server {
 }
 
 func (s *Server) Run(ctx context.Context) error {
-
 	g, ctx := errgroup.WithContext(context.Background())
-
-	g.Go(func() error {
-		log.Printf("debug server start and listen: %s", s.debugPort)
-		if err := s.debugHTTPSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			return fmt.Errorf("error to start debug server: %s", err)
-		}
-
-		return nil
-	})
 
 	g.Go(func() error {
 		log.Printf("main server start and listen: %s", s.mainPort)
@@ -89,14 +71,6 @@ func (s *Server) Shutdown(ctx context.Context) error {
 	defer cancel()
 
 	g, ctx := errgroup.WithContext(ctx)
-	g.Go(func() error {
-		log.Printf("shutdown debug server: %s", s.debugPort)
-		if err := s.debugHTTPSrv.Shutdown(ctx); err != nil {
-			return fmt.Errorf("error to shutdown debug server: %s", err)
-		}
-
-		return nil
-	})
 
 	g.Go(func() error {
 		log.Printf("shutdown main server: %s", s.mainPort)

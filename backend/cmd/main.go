@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"log"
-	"photo-upload-service/cmd/application"
+	"photo-upload-service/internal/application"
 )
 
 func main() {

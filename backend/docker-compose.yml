@@ -11,8 +11,7 @@ services:
       - ENV=production
       - CONFIG_FILE=/app/configs/docker.yaml
     depends_on:
-      rabbitmq:
-        condition: service_started
+      - rabbitmq
     volumes:
       - ./configs:/app/configs
     restart: unless-stopped
