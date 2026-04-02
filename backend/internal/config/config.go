@@ -3,8 +3,10 @@ package config
 import (
 	"context"
 	"fmt"
-	"github.com/sethvargo/go-envconfig"
 	"log"
+	"time"
+
+	"github.com/sethvargo/go-envconfig"
 )
 
 type Cfg struct {
@@ -14,8 +16,12 @@ type Cfg struct {
 }
 
 type Service struct {
-	Host     string `env:"BACKEND_HOST, default=0.0.0.0"`
-	MainPort string `env:"BACKEND_EXTERNAL_PORT, default=8080"`
+	Host            string        `env:"BACKEND_HOST, default=0.0.0.0"`
+	MainPort        string        `env:"BACKEND_EXTERNAL_PORT, default=8080"`
+	ReadTimeout     time.Duration `env:"READ_TIMEOUT_IN_SEC, default=10s"`
+	WriteTimeout    time.Duration `env:"WRITE_TIMEOUT_IN_SEC, default=10s"`
+	IdleTimeout     time.Duration `env:"IDLE_TIMEOUT_IN_SEC, default=15s"`
+	ShutdownTimeout time.Duration `env:"SHUTDOWN_TIMEOUT, default=3s"`
 }
 
 type RabbitMQ struct {

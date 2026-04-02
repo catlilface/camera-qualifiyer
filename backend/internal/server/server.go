@@ -7,6 +7,7 @@ import (
 	"golang.org/x/sync/errgroup"
 	"log"
 	"net/http"
+	"photo-upload-service/internal/config"
 	"time"
 )
 
@@ -24,29 +25,30 @@ type Server struct {
 	mainPort    string
 }
 
-func New(mainPort string) *Server {
+func New(cfg *config.Service) *Server {
 	gin.SetMode(gin.DebugMode)
 
 	mainRouter := gin.New()
 
 	mainRouter.GET("/health", func(c *gin.Context) {
+		log.Println("Healthcheck request")
 		c.Status(http.StatusOK)
 	})
 
 	return &Server{
 		mainRouter:  mainRouter,
-		mainHTTPSrv: newHTTPServer(buildLocalAddr(mainPort), mainRouter),
-		mainPort:    mainPort,
+		mainHTTPSrv: newHTTPServer(cfg, mainRouter),
+		mainPort:    cfg.MainPort,
 	}
 }
 
-func newHTTPServer(addr string, router *gin.Engine) *http.Server {
+func newHTTPServer(cfg *config.Service, router *gin.Engine) *http.Server {
 	return &http.Server{
-		Addr:         addr,
+		Addr:         cfg.Host,
 		Handler:      router,
-		ReadTimeout:  readTimeout,
-		WriteTimeout: writeTimeout,
-		IdleTimeout:  idleTimeout,
+		ReadTimeout:  cfg.ReadTimeout,
+		WriteTimeout: cfg.WriteTimeout,
+		IdleTimeout:  cfg.IdleTimeout,
 	}
 }
 
