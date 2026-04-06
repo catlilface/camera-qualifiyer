@@ -19,8 +19,8 @@ import (
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Загрузка фотографии
-	// (POST /photos/upload)
-	UploadPhoto(c *gin.Context)
+	// (POST /api/v1/evaluate)
+	Evaluate(c *gin.Context)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -32,8 +32,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// UploadPhoto operation middleware
-func (siw *ServerInterfaceWrapper) UploadPhoto(c *gin.Context) {
+// Evaluate operation middleware
+func (siw *ServerInterfaceWrapper) Evaluate(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -42,7 +42,7 @@ func (siw *ServerInterfaceWrapper) UploadPhoto(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.UploadPhoto(c)
+	siw.Handler.Evaluate(c)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -72,26 +72,25 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.POST(options.BaseURL+"/photos/upload", wrapper.UploadPhoto)
+	router.POST(options.BaseURL+"/api/v1/evaluate", wrapper.Evaluate)
 }
 
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

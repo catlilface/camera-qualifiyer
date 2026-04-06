@@ -56,10 +56,10 @@ func (s *Server) Run(ctx context.Context) error {
 	g, ctx := errgroup.WithContext(context.Background())
 
 	g.Go(func() error {
-		log.Printf("main server start and listen: %s", s.mainPort)
 		if err := s.mainHTTPSrv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			return fmt.Errorf("error to start main server: %s", err)
 		}
+		log.Printf("main server start and listen: %s", s.mainPort)
 
 		return nil
 	})

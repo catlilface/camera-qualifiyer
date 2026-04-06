@@ -17,3 +17,80 @@ paths:
       responses:
         '200':
           description: Ok
+
+  /api/v1/evaluate:
+    post:
+      summary: Загрузка фотографии
+      description: Загружает фотографию для указанного метода и дисплея
+      operationId: evaluate
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EvaluateUploadRequest'
+      responses:
+        '200':
+          description: Успешная загрузка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluateSuccessResponse'
+        '400':
+          description: Неверный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    EvaluateUploadRequest:
+      type: object
+      required:
+        - method_id
+        - display_id
+        - image
+      properties:
+        method_id:
+          type: integer
+          description: ID метода
+          example: 123
+          minimum: 1
+        display_id:
+          type: integer
+          description: ID дисплея
+          example: 456
+          minimum: 1
+        image:
+          type: string
+          format: binary
+          description: Файл изображения (JPEG, PNG, GIF)
+
+    EvaluateSuccessResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+        id:
+          type: string
+          format: uuid
+
+    ErrorResponse:
+      type: object
+      required:
+        - status
+        - error
+      properties:
+        status:
+          type: string
+        error:
+          type: string

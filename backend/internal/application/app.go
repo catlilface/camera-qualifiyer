@@ -6,7 +6,11 @@ import (
 	"os"
 	"os/signal"
 	"photo-upload-service/internal/config"
+	photoHandler "photo-upload-service/internal/handlers/photo"
+	api "photo-upload-service/internal/pkg/api/photo"
+	"photo-upload-service/internal/rabbitmq"
 	"photo-upload-service/internal/server"
+	photoSrv "photo-upload-service/internal/service/photo"
 	"syscall"
 )
 
@@ -35,10 +39,25 @@ func (a *App) Run(ctx context.Context) error {
 	//graceful shutdown
 	go a.signalHandler(ctx)
 
+	//queue
+	rabbit, err := rabbitmq.NewPublisher(a.cfg)
+	if err != nil {
+		return err
+	}
+	a.AddCloser(rabbit.Close)
+
+	//services
+	photoService := photoSrv.NewPhotoService(rabbit)
+
+	//handlers
+	photoConnector := photoHandler.NewPhotoHandler(photoService)
+
 	//http server
 	a.srv = server.New(
-		a.cfg.Service.MainPort,
+		&a.cfg.Service,
 	)
+
+	api.RegisterHandlers(a.srv.GetMainRouter(), photoConnector)
 
 	return a.srv.Run(ctx)
 }
