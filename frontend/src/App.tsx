@@ -4,4 +4,4 @@ function App() {
   return <EvaluationPage />
 }
 
-export default App
+export default App;
