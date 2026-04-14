@@ -8,15 +8,8 @@ import (
 	"log"
 	"net/http"
 	"photo-upload-service/internal/config"
+	"photo-upload-service/internal/middleware"
 	"time"
-)
-
-const (
-	readTimeout  = 10 * time.Second
-	writeTimeout = 10 * time.Second
-	idleTimeout  = 15 * time.Second
-
-	shutdownTimeout = 3 * time.Second
 )
 
 type Server struct {
@@ -29,6 +22,9 @@ func New(cfg *config.Service) *Server {
 	gin.SetMode(gin.DebugMode)
 
 	mainRouter := gin.New()
+
+	mainRouter.Use(middleware.RequestIDMiddleware())
+	mainRouter.Use(gin.Recovery())
 
 	mainRouter.GET("/health", func(c *gin.Context) {
 		log.Println("Healthcheck request")
@@ -44,7 +40,7 @@ func New(cfg *config.Service) *Server {
 
 func newHTTPServer(cfg *config.Service, router *gin.Engine) *http.Server {
 	return &http.Server{
-		Addr:         cfg.Host,
+		Addr:         fmt.Sprintf("%s:%s", cfg.Host, cfg.MainPort),
 		Handler:      router,
 		ReadTimeout:  cfg.ReadTimeout,
 		WriteTimeout: cfg.WriteTimeout,
@@ -67,9 +63,9 @@ func (s *Server) Run(ctx context.Context) error {
 	return g.Wait()
 }
 
-func (s *Server) Shutdown(ctx context.Context) error {
+func (s *Server) Shutdown(ctx context.Context, timeout time.Duration) error {
 	//время на завершение запросов
-	ctx, cancel := context.WithTimeout(ctx, shutdownTimeout)
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
 	g, ctx := errgroup.WithContext(ctx)
@@ -88,8 +84,4 @@ func (s *Server) Shutdown(ctx context.Context) error {
 
 func (s *Server) GetMainRouter() *gin.Engine {
 	return s.mainRouter
-}
-
-func buildLocalAddr(port string) string {
-	return fmt.Sprintf(":%s", port)
 }

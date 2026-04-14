@@ -25,13 +25,14 @@ type Service struct {
 }
 
 type RabbitMQ struct {
-	Host      string `env:"RABBITMQ_HOST, default=localhost"`
-	PortUI    string `env:"RABBITMQ_PORT_UI, default=15672"`
-	PortAMQP  string `env:"RABBITMQ_PORT_AMQP, default=5672"`
-	User      string `env:"RABBITMQ_USER, default=guest"`
-	Password  string `env:"RABBITMQ_PASSWORD, default=guest"`
-	QueueName string `env:"RABBITMQ_PHOTO_QUEUE_NAME, default=photos_queue"`
-	URL       string
+	Host           string        `env:"RABBITMQ_HOST, default=localhost"`
+	PortUI         string        `env:"RABBITMQ_PORT_UI, default=15672"`
+	PortAMQP       string        `env:"RABBITMQ_PORT_AMQP, default=5672"`
+	User           string        `env:"RABBITMQ_USER, default=guest"`
+	Password       string        `env:"RABBITMQ_PASSWORD, default=guest"`
+	QueueName      string        `env:"RABBITMQ_PHOTO_QUEUE_NAME, default=photos_queue"`
+	PublishTimeout time.Duration `env:"RABBITMQ_PUBLISH_TIMEOUT_IS_SEC, default=30s"`
+	URL            string
 }
 
 type Postgres struct {

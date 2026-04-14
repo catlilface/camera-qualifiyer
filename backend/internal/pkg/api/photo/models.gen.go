@@ -7,23 +7,29 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
-// Error defines model for Error.
-type Error struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
+// ErrorResponse defines model for ErrorResponse.
+type ErrorResponse struct {
+	Error  string `json:"error"`
+	Status string `json:"status"`
 }
 
-// UploadResponse defines model for UploadResponse.
-type UploadResponse struct {
-	// ID Уникальный идентификатор фотографии
-	ID openapi_types.UUID `json:"id"`
+// EvaluateSuccessResponse defines model for EvaluateSuccessResponse.
+type EvaluateSuccessResponse struct {
+	ID     *openapi_types.UUID `json:"id,omitempty"`
+	Status string              `json:"status"`
 }
 
-// UploadPhotoMultipartBody defines parameters for UploadPhoto.
-type UploadPhotoMultipartBody struct {
-	// Photo Файл фотографии
-	Photo openapi_types.File `json:"photo"`
+// EvaluateUploadRequest defines model for EvaluateUploadRequest.
+type EvaluateUploadRequest struct {
+	// DisplayID ID дисплея
+	DisplayID int `json:"display_id"`
+
+	// Image Файл изображения (JPEG, PNG, GIF)
+	Image openapi_types.File `json:"image"`
+
+	// MethodID ID метода
+	MethodID int `json:"method_id"`
 }
 
-// UploadPhotoMultipartRequestBody defines body for UploadPhoto for multipart/form-data ContentType.
-type UploadPhotoMultipartRequestBody UploadPhotoMultipartBody
+// EvaluateMultipartRequestBody defines body for Evaluate for multipart/form-data ContentType.
+type EvaluateMultipartRequestBody = EvaluateUploadRequest
