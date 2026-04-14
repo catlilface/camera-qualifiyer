@@ -21,6 +21,7 @@ type EvaluationMessage struct {
 	PhotoID uuid.UUID   `json:"photo_id"`
 	Monitor MonitorData `json:"monitor"`
 	Method  string      `json:"method"`
+	Ext     string      `json:"ext"`
 }
 
 type ProcessPhotoData struct {

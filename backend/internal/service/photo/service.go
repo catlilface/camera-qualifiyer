@@ -10,6 +10,7 @@ import (
 	"photo-upload-service/internal/models"
 	photoApi "photo-upload-service/internal/pkg/api/photo"
 	"photo-upload-service/internal/rabbitmq"
+	"strings"
 )
 
 type Service struct {
@@ -30,8 +31,14 @@ func (s *Service) ProcessPhoto(ctx context.Context, data models.ProcessPhotoData
 		return nil, fmt.Errorf("service: failed to get working directory: %w", err)
 	}
 
-	photosDir := filepath.Join(projectRoot, "..", "photosInProcess") //TODO: путь из конфига?
-	filePath := filepath.Join(photosDir, id.String()+".png")
+	photosDir := filepath.Join(projectRoot, "..", ".photos")
+
+	ext := strings.ToLower(filepath.Ext(data.File.Filename()))
+	if ext == "" {
+		ext = ".png"
+	}
+
+	filePath := filepath.Join(photosDir, id.String()+ext)
 
 	if err := os.MkdirAll(photosDir, 0755); err != nil {
 		return nil, fmt.Errorf("service: failed to create directory: %w", err)
@@ -42,7 +49,7 @@ func (s *Service) ProcessPhoto(ctx context.Context, data models.ProcessPhotoData
 		return nil, fmt.Errorf("service: failed to save file: %w", err)
 	}
 
-	err = s.queuePublisher.PublishPhoto(ctx, id)
+	err = s.queuePublisher.PublishPhoto(ctx, id, ext)
 	if err != nil {
 		return nil, fmt.Errorf("service: failed to process file: %w", err)
 	}

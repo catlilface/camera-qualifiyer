@@ -3,12 +3,14 @@ package rabbitmq
 import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	"photo-upload-service/internal/config"
+	"time"
 )
 
 type Publisher struct {
-	conn      *amqp.Connection
-	channel   *amqp.Channel
-	queueName string
+	conn           *amqp.Connection
+	channel        *amqp.Channel
+	queueName      string
+	publishTimeout time.Duration
 }
 
 func NewPublisher(cfg *config.Cfg) (*Publisher, error) {
@@ -38,9 +40,10 @@ func NewPublisher(cfg *config.Cfg) (*Publisher, error) {
 	}
 
 	return &Publisher{
-		conn:      conn,
-		channel:   channel,
-		queueName: cfg.Queue.QueueName,
+		conn:           conn,
+		channel:        channel,
+		queueName:      cfg.Queue.QueueName,
+		publishTimeout: cfg.Queue.PublishTimeout,
 	}, nil
 }
 

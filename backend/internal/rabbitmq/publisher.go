@@ -10,18 +10,17 @@ import (
 	"time"
 )
 
-func (p *Publisher) PublishPhoto(ctx context.Context, id uuid.UUID) error {
+func (p *Publisher) PublishPhoto(ctx context.Context, id uuid.UUID, ext string) error {
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
 	default:
 	}
 
-	//TODO: добавить методы и данные о мониторе после реализации бд и остальных энгдпоинтов
 	message := models.EvaluationMessage{
 		PhotoID: id,
-		Monitor: models.MonitorData{ID: 1},
 		Method:  "Mock method",
+		Ext:     ext,
 	}
 
 	jsonData, err := json.Marshal(message)
@@ -33,7 +32,7 @@ func (p *Publisher) PublishPhoto(ctx context.Context, id uuid.UUID) error {
 	var cancel context.CancelFunc
 
 	if _, ok := ctx.Deadline(); !ok {
-		publishCtx, cancel = context.WithTimeout(ctx, 30*time.Second)
+		publishCtx, cancel = context.WithTimeout(ctx, p.publishTimeout)
 		defer cancel()
 	} else {
 		publishCtx = ctx
@@ -51,9 +50,6 @@ func (p *Publisher) PublishPhoto(ctx context.Context, id uuid.UUID) error {
 			DeliveryMode: amqp.Persistent,
 			MessageId:    id.String(),
 			Timestamp:    time.Now(),
-			Headers: amqp.Table{
-				"photo_id": id.String(),
-			},
 		},
 	)
 
